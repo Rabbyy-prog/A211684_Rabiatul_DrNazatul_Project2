@@ -1,4 +1,4 @@
-package com.example.a211684_nazatulaini_lab1
+package com.example.a211684_rabiatul_drnazatulaini_lab2
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -59,92 +59,89 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.example.a211684_nazatulaini_lab1.ui.theme.A211684_Nur_Rabiatul_Nabila_NazatulAini_Lab1Theme
+import com.example.a211684_rabiatul_drnazatulaini_lab2.ui.theme.A211684_Rabiatul_DrNazatulAini_Lab2Theme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge() //make UI go full screen
         setContent {
-            A211684_Nur_Rabiatul_Nabila_NazatulAini_Lab1Theme {
+            A211684_Rabiatul_DrNazatulAini_Lab2Theme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ElecTraxHomepage() //Referance: Gentari Go App
                 }
-              }
             }
         }
     }
+}
 
 @Composable
 fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displayed on top
-    Box(modifier = Modifier
-        .fillMaxSize() //make full width & full height
-        .background(Color(0xFFF0FFFF))){
-
-        var destinationInput by remember {mutableStateOf("")} //user input
-        var isMessageVisible by remember { mutableStateOf(false)}  //show & hide notification message
-        var searchResult by remember {mutableStateOf("")} //update showing stations near []
-        var showSuggestions by remember {mutableStateOf(false)} //whether the window is open/closed
+    Box(
+        modifier = Modifier
+            .fillMaxSize() //make full width & full height
+            .background(Color(0xFFF0FFFF))
+    ) {
+        var destinationInput by remember { mutableStateOf("") } //user input
+        var isMessageVisible by remember { mutableStateOf(false) } //show & hide notification message
+        var searchResult by remember { mutableStateOf("") } //use "" to update showing stations near "(places)"
+        var showSuggestions by remember { mutableStateOf(false) } //whether the window is open/closed
 
         TopWallpaper()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 150.dp)
-                .padding(12.dp)
+                .padding(top = 150.dp)  // Starts just below wallpaper
+                .padding(horizontal = 13.dp)  //lgi besar padding, lagi kecil margin
+                .padding(bottom = 16.dp)
                 .verticalScroll(rememberScrollState())
-        )
-        {
+        ) {
             EditSearchField(
                 label = R.string.where,
                 leadingIcon = R.drawable.pin_destination_finder,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Search
+                    keyboardType = KeyboardType.Text, //can show both number and text
+                    imeAction = ImeAction.Search //the keypad button label as search
                 ),
-                value = destinationInput,
-                onValueChange = {
-                    destinationInput = it
+                value = destinationInput,  // value = what to DISPLAY
+                onValueChange = { //what to DO when user types
+                    destinationInput = it // it = new text
                     if (it.isEmpty()) {
                         showSuggestions = false
                         searchResult = ""
                     }
-       },
+                },
                 modifier = Modifier
                     .padding(bottom = 12.dp)
                     .fillMaxWidth()
-                    .height(56.dp)
             )
-            Button(
-                onClick = {
-                    searchResult = "Showing stations near $destinationInput"
-                    showSuggestions = true
-                },
-                modifier = Modifier.fillMaxWidth()
-            ){
-                Text("Search")
-            }
 
-            if (searchResult.isNotEmpty()) {
+            Button( //Search button
+                onClick = { searchResult = "Showing stations near $destinationInput" //the sentences label
+                            showSuggestions = true}, //show suggestions list
+                modifier = Modifier.fillMaxWidth()
+                ) { Text("Search") }
+
+            if (searchResult.isNotEmpty()) { //desc properties of searchResult text
                 Text(
                     text = searchResult,
                     fontSize = 14.sp,
                     color = Color.Black,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp) //vertical = shortcut for top & bottom
                 )
             }
 
-            AnimatedVisibility(
-                visible = showSuggestions,
+            AnimatedVisibility( //inside column sbb nak dia appear below search button and above nearest stations card
+                visible = showSuggestions && destinationInput.isNotEmpty(), //not using if because the searchSuggestions card will blinking frequently, visible = switch already
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
                 SearchSuggestions(query = destinationInput) { selected ->
-                    destinationInput = selected
+                    destinationInput = selected //selected -> temporary variable clicked by user, the next selected = update
                 }
             }
 
@@ -162,18 +159,18 @@ fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displ
             BottomNav()
         }
 
-        Notification(
+        Notification( //not inside column because i want the bell to be on top of background wallpaper
             modifier = Modifier.align(Alignment.TopEnd),
             onClick = { isMessageVisible = !isMessageVisible }
         )
 
-        if(isMessageVisible){
+        if (isMessageVisible) {
             Card(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(end = 16.dp, top = 95.dp)
                     .width(260.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), //shadows, low elevation, sharper shadows
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
@@ -189,60 +186,60 @@ fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displ
 }
 
 @Composable
-fun TopWallpaper(){
+fun TopWallpaper() {
     Image(
         painter = painterResource(id = R.drawable.hari_raya_wallpaper_2), //take pic from res/drawable folder
         contentDescription = "Hari Raya Banner", //for accessibility tools
         modifier = Modifier
             .fillMaxWidth() //occupy full width only, not full height
-                    .height(190.dp),
-                    contentScale = ContentScale.Crop
+            .height(190.dp),
+        contentScale = ContentScale.Crop
     )
 }
 
 @Composable
-fun Notification(modifier: Modifier = Modifier, onClick: () -> Unit = {}){
-        IconButton(
-            onClick = onClick,
-            modifier = modifier
-                .padding(top = 40.dp, end = 16.dp)
-                .size(48.dp)
-                .background(Color.White.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
-        ){
-            Icon(
-                painter = painterResource(id = R.drawable.bell),
-                contentDescription = "Notification",
-                tint = Color.Unspecified,
-                modifier = Modifier.size(24.dp)
-            )
-        }
+fun Notification(modifier: Modifier = Modifier, onClick: () -> Unit = {}) { //query = destinationInput, {} = no input, Unit = return nothing, Unit mean function declaration
+    IconButton( //white opacity circle button
+        onClick = onClick,
+        modifier = modifier
+            .padding(top = 40.dp, end = 16.dp)
+            .size(48.dp)
+            .background(Color.White.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
+    ) {
+        Icon( //my bell icon
+            painter = painterResource(id = R.drawable.bell),
+            contentDescription = "Notification",
+            tint = Color.Unspecified,
+            modifier = Modifier.size(24.dp)
+        )
+    }
 }
 
 @Composable
 fun EditSearchField(
-
     @StringRes label: Int,
     @DrawableRes leadingIcon: Int,
     keyboardOptions: KeyboardOptions,
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     TextField(
-        value = value,
-        onValueChange = onValueChange,
+        value = value, //
+        onValueChange = onValueChange,//
         singleLine = true,
-        leadingIcon = { Icon (
-            painter = painterResource(id=leadingIcon),
-            contentDescription = null,
-            modifier = Modifier.size(24.dp)
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = leadingIcon),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
             )
-            },
-        label = {Text (stringResource( label))},
+        },
+        label = { Text(stringResource(id = label)) },
         keyboardOptions = keyboardOptions,
         shape = RoundedCornerShape(28.dp),
         colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent, //dont want underline text input
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         ),
@@ -251,7 +248,7 @@ fun EditSearchField(
 }
 
 @Composable
-fun SearchSuggestions(query: String, onSelect: (String) -> Unit) {
+fun SearchSuggestions(query: String, onSelect: (String) -> Unit) { //
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -259,8 +256,8 @@ fun SearchSuggestions(query: String, onSelect: (String) -> Unit) {
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
-    ){
-        Column(modifier = Modifier.padding(8.dp)){
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
             Text(
                 text = "Suggestions for: \"$query\"",
                 fontSize = 12.sp,
@@ -274,8 +271,8 @@ fun SearchSuggestions(query: String, onSelect: (String) -> Unit) {
 }
 
 @Composable
-fun SuggestionItem(name:String, distance:String, onSelect: (String) -> Unit){
-    Row(
+fun SuggestionItem(name: String, distance: String, onSelect: (String) -> Unit) {
+    Row( // arrange icon & text section horizontally //side by side
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onSelect(name) }
@@ -286,7 +283,7 @@ fun SuggestionItem(name:String, distance:String, onSelect: (String) -> Unit){
             painter = painterResource(id = R.drawable.map),
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = Color(0xFF00AEEF)
+            tint = Color(0xFF00AEEF) //
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column {
@@ -300,33 +297,23 @@ fun SuggestionItem(name:String, distance:String, onSelect: (String) -> Unit){
 fun NearestLocation() {
     Column(
         modifier = Modifier
-            // remove offset bcs (lower -ve = card overlap higher on top of wallpaper) offset = move/shift position
             .fillMaxWidth()
             .background(Color.LightGray, RoundedCornerShape(12.dp))
-            .padding(16.dp) //distance between content & border
-            .padding(top = 20.dp) //only between content & top border
+            .padding(16.dp)
+            .padding(top = 20.dp)
     ) {
-        Text(
-            "Your nearest station:",
-            fontSize = 12.sp,
-        )
+        Text("Your nearest station:", fontSize = 12.sp)
         Text(
             "[Public] BANGI GATEWAY MALL (Shopping Mall)",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
-        Text(
-            "60 kW max  - 1.8km  - 0.0",
-            fontSize = 12.sp,
-        )
+        Text("60 kW max  - 1.8km  - 0.0", fontSize = 12.sp)
         Spacer(modifier = Modifier.height(8.dp))
-
         Button(
-            onClick = {}, //empty onClick first, lead to nowhere
+            onClick = {},
             modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF00AEEF)
-            )
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00AEEF))
         ) {
             Text("1.8 km away - Get Directions")
         }
@@ -335,13 +322,13 @@ fun NearestLocation() {
 
 @Composable
 fun AlternativeLocations() {
-    Row( //horizontal arrangement
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min), //sec card follow the same height (take the highest height)
-                horizontalArrangement = Arrangement.SpaceAround
+            .height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.SpaceAround
     ) {
-        Box(modifier = Modifier.weight(1f)) { //use box to apply weight easily, 2 box = 2 cards (2 small locations)
+        Box(modifier = Modifier.weight(1f)) {
             SmallLocation("CHRISTINE'S BAKERY BANGI AVENUE", "2.6 km")
         }
         Box(modifier = Modifier.weight(1f)) {
@@ -355,10 +342,10 @@ fun SmallLocation(name: String, distance: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight() //both follow parent height
-            .padding(4.dp) //distance outside (between border)
+            .fillMaxHeight()
+            .padding(4.dp)
             .background(Color(0xFFEAEAEA), RoundedCornerShape(12.dp))
-            .padding(12.dp) //distance inside (between content & border)
+            .padding(12.dp)
     ) {
         Text(name, fontSize = 12.sp, maxLines = 2, color = Color.Black)
         Text(distance, fontSize = 10.sp, color = Color.Black)
@@ -366,41 +353,36 @@ fun SmallLocation(name: String, distance: String) {
 }
 
 @Composable
-fun FeaturesGrid(){
+fun FeaturesGrid() {
     Column {
-        Row(  //in column 1, there is 3 rows of feature items
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            FeatureItem("FastCharge \nStations", R.drawable.fastcharge_stations_icon, Modifier.weight(1f)){}
-            FeatureItem("AutoCharge", R.drawable.auto_charge, Modifier.weight(1f)){}
-            FeatureItem("Offline Mode", R.drawable.offline, Modifier.weight(1f)){}
+        Row(modifier = Modifier.fillMaxWidth()) {
+            FeatureItem("FastCharge \nStations", R.drawable.fastcharge_stations_icon, Modifier.weight(1f)) {} //
+            FeatureItem("AutoCharge", R.drawable.auto_charge, Modifier.weight(1f)) {}
+            FeatureItem("Offline Mode", R.drawable.offline, Modifier.weight(1f)) {}
         }
         Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        )
-        {
-            FeatureItem("EAST Chargers", R.drawable.east_coast,Modifier.weight(1f)){}
-            FeatureItem("Report Fault", R.drawable.report_fault,Modifier.weight(1f)){}
-            FeatureItem("New Stations", R.drawable.new_site, Modifier.weight(1f)){}
+        Row(modifier = Modifier.fillMaxWidth()) {
+            FeatureItem("EAST Chargers", R.drawable.east_coast, Modifier.weight(1f)) {}
+            FeatureItem("Report Fault", R.drawable.report_fault, Modifier.weight(1f)) {}
+            FeatureItem("New Stations", R.drawable.new_site, Modifier.weight(1f)) {}
         }
     }
 }
 
 @Composable
-fun FeatureItem(label:String, iconRes: Int, modifier: Modifier = Modifier, onClick:() ->Unit){ //iconRes:Int because R.drawable.xxx is integerID
+fun FeatureItem(label: String, iconRes: Int, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Column(
         modifier = modifier
-        .clip(RoundedCornerShape(30.dp))
-        .clickable(onClick = onClick),
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Box( //each circle features box
+    ) {
+        Box(
             modifier = Modifier
                 .size(60.dp)
                 .background(Color(0xFFDDA0DD), RoundedCornerShape(30.dp)),
-                contentAlignment = Alignment.Center
-            ){
+            contentAlignment = Alignment.Center
+        ) {
             Image(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
@@ -409,13 +391,8 @@ fun FeatureItem(label:String, iconRes: Int, modifier: Modifier = Modifier, onCli
                     .padding(12.dp)
             )
         }
-             Spacer(modifier = Modifier.height(8.dp)) //spacing between icon & text
-             Text(
-                 text = label,
-                 fontSize = 10.sp,
-                 maxLines = 2,
-                 textAlign = TextAlign.Center
-                )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = label, fontSize = 10.sp, maxLines = 2, textAlign = TextAlign.Center)
     }
 }
 
@@ -426,9 +403,8 @@ fun BottomNav() {
             .fillMaxWidth()
             .background(Color.White)
             .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceAround
-    )
-    {
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
         BottomItem("Explore", R.drawable.explore, Modifier.weight(1f))
         BottomItem("Maps", R.drawable.map, Modifier.weight(1f))
         BottomItem("Scan", R.drawable.scan, Modifier.weight(1f))
@@ -441,16 +417,18 @@ fun BottomNav() {
 fun BottomItem(label: String, iconRes: Int, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Box(
             modifier = Modifier
                 .size(30.dp),
-                contentAlignment = Alignment.Center
-        ){
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            modifier = Modifier.size(24.dp))
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = label,
+                modifier = Modifier.size(24.dp)
+            )
         }
         Text(label, fontSize = 10.sp, color = Color.Gray)
     }
@@ -459,7 +437,7 @@ fun BottomItem(label: String, iconRes: Int, modifier: Modifier = Modifier) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GGPreview() {
-    A211684_Nur_Rabiatul_Nabila_NazatulAini_Lab1Theme {
+    A211684_Rabiatul_DrNazatulAini_Lab2Theme {
         ElecTraxHomepage()
     }
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.a211684_nazatulaini_lab1"
+    namespace = "com.example.a211684_rabiatul_drnazatulaini_lab2"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.a211684_nazatulaini_lab1"
+        applicationId = "com.example.a211684_nazatulaini_lab2"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

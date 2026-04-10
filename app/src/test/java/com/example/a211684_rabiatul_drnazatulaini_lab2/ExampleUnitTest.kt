@@ -1,4 +1,4 @@
-package com.example.a211684_nazatulaini_lab1
+package com.example.a211684_rabiatul_drnazatulaini_lab2
 
 import org.junit.Test
 
