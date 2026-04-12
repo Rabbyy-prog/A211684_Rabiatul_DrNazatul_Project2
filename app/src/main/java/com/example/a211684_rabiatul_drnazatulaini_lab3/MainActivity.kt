@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_lab2
+package com.example.a211684_rabiatul_drnazatulaini_lab3
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -6,12 +6,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.ui.draw.shadow
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,14 +67,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.example.a211684_rabiatul_drnazatulaini_lab2.ui.theme.A211684_Rabiatul_DrNazatulAini_Lab2Theme
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import com.example.a211684_rabiatul_drnazatulaini_lab3.ui.theme.A211684_Rabiatul_DrNazatulAini_Lab3Theme
+import com.example.a211684_rabiatul_drnazatulaini_lab3.ui.theme.secondaryContainerDark
+import com.example.a211684_rabiatul_drnazatulaini_lab3.ui.theme.secondaryContainerLight
+import com.example.a211684_rabiatul_drnazatulaini_lab3.ui.theme.tertiaryContainerLight
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge() //make UI go full screen
         setContent {
-            A211684_Rabiatul_DrNazatulAini_Lab2Theme {
+            A211684_Rabiatul_DrNazatulAini_Lab3Theme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -82,8 +95,8 @@ class MainActivity : ComponentActivity() {
 fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displayed on top
     Box(
         modifier = Modifier
-            .fillMaxSize() //make full width & full height
-            .background(Color(0xFFF0FFFF))
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background) // Changed from Color(0xFFF0FFFF)
     ) {
         var destinationInput by remember { mutableStateOf("") } //user input
         var isMessageVisible by remember { mutableStateOf(false) } //show & hide notification message
@@ -98,8 +111,12 @@ fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displ
                 .padding(top = 150.dp)  // Starts just below wallpaper
                 .padding(horizontal = 13.dp)  //lgi besar padding, lagi kecil margin
                 .padding(bottom = 16.dp)
-                .verticalScroll(rememberScrollState())
         ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ){
             EditSearchField(
                 label = R.string.where,
                 leadingIcon = R.drawable.pin_destination_finder,
@@ -120,18 +137,22 @@ fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displ
                     .fillMaxWidth()
             )
 
-            Button( //Search button
-                onClick = { searchResult = "Showing stations near $destinationInput" //the sentences label
-                            showSuggestions = true}, //show suggestions list
-                modifier = Modifier.fillMaxWidth()
-                ) { Text("Search") }
+            Button(
+                onClick = {
+                    searchResult = "Showing stations near $destinationInput"
+                    showSuggestions = true
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) { Text("Search") }
 
-            if (searchResult.isNotEmpty()) { //desc properties of searchResult text
+            if (searchResult.isNotEmpty()) {
                 Text(
                     text = searchResult,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontSize = 14.sp,
-                    color = Color.Black,
-                    modifier = Modifier.padding(vertical = 8.dp) //vertical = shortcut for top & bottom
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
 
@@ -141,7 +162,8 @@ fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displ
                 exit = shrinkVertically()
             ) {
                 SearchSuggestions(query = destinationInput) { selected ->
-                    destinationInput = selected //selected -> temporary variable clicked by user, the next selected = update
+                    destinationInput =
+                        selected //selected -> temporary variable clicked by user, the next selected = update
                 }
             }
 
@@ -154,11 +176,11 @@ fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displ
             Spacer(modifier = Modifier.height(12.dp))
 
             FeaturesGrid()
-            Spacer(modifier = Modifier.weight(1f)) //occupy remaining space & push BottomNav to the bottom
+            Spacer(modifier = Modifier.height(20.dp)) //occupy remaining space & push BottomNav to the bottom
 
-            BottomNav()
         }
-
+        BottomNav()
+    }
         Notification( //not inside column because i want the bell to be on top of background wallpaper
             modifier = Modifier.align(Alignment.TopEnd),
             onClick = { isMessageVisible = !isMessageVisible }
@@ -172,13 +194,13 @@ fun ElecTraxHomepage() {  //need for overlay/layering (nearest location is displ
                     .width(260.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), //shadows, low elevation, sharper shadows
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Text(
                     text = "No new notifications yet",
                     modifier = Modifier.padding(16.dp),
                     fontSize = 14.sp,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -204,12 +226,12 @@ fun Notification(modifier: Modifier = Modifier, onClick: () -> Unit = {}) { //qu
         modifier = modifier
             .padding(top = 40.dp, end = 16.dp)
             .size(48.dp)
-            .background(Color.White.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
     ) {
         Icon( //my bell icon
             painter = painterResource(id = R.drawable.bell),
             contentDescription = "Notification",
-            tint = Color.Unspecified,
+            tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.size(24.dp)
         )
     }
@@ -232,36 +254,40 @@ fun EditSearchField(
             Icon(
                 painter = painterResource(id = leadingIcon),
                 contentDescription = null,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.primary
             )
         },
         label = { Text(stringResource(id = label)) },
         keyboardOptions = keyboardOptions,
         shape = RoundedCornerShape(28.dp),
         colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent, //dont want underline text input
+            focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
+            disabledIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         modifier = modifier
     )
 }
 
 @Composable
-fun SearchSuggestions(query: String, onSelect: (String) -> Unit) { //
+fun SearchSuggestions(query: String, onSelect: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             Text(
                 text = "Suggestions for: \"$query\"",
+                style = MaterialTheme.typography.labelSmall,
                 fontSize = 12.sp,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.padding(8.dp)
             )
             SuggestionItem("Bangi Gateway Mall", "1.8 km", onSelect)
@@ -283,73 +309,145 @@ fun SuggestionItem(name: String, distance: String, onSelect: (String) -> Unit) {
             painter = painterResource(id = R.drawable.map),
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = Color(0xFF00AEEF) //
+            tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column {
-            Text(text = name, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-            Text(text = distance, fontSize = 12.sp, color = Color.Gray)
+            Text(text = name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelSmall)
+            Text(text = distance, fontSize = 12.sp, color = MaterialTheme.colorScheme.outline, style = MaterialTheme.typography.labelSmall)
         }
     }
 }
 
 @Composable
 fun NearestLocation() {
-    Column(
+    var expanded by remember { mutableStateOf(false)}
+    val color by animateColorAsState(
+        targetValue = if (expanded) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer)
+
+    val textColor = if (expanded) {
+        Color.Black
+    } else {
+        MaterialTheme.colorScheme.onSecondaryContainer
+    }
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray, RoundedCornerShape(12.dp))
+            .shadow(4.dp, RoundedCornerShape(16.dp)),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(containerColor = color)
+    )
+    {
+    Column(
+        modifier = Modifier
             .padding(16.dp)
-            .padding(top = 20.dp)
+            .animateContentSize(spring (dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMedium
+                )
+            )
     ) {
-        Text("Your nearest station:", fontSize = 12.sp)
-        Text(
-            "[Public] BANGI GATEWAY MALL (Shopping Mall)",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text("60 kW max  - 1.8km  - 0.0", fontSize = 12.sp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "Your nearest station:",
+                    style = MaterialTheme.typography.displayMedium,
+                    fontSize = 12.sp,
+                    color =textColor
+                )
+                Spacer(modifier=Modifier.height(8.dp))
+
+                Text(
+                    "[Public] BANGI GATEWAY MALL (Shopping Mall)",
+                    style = MaterialTheme.typography.displayMedium,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor
+                )
+                Text(
+                    "60 kW max  - 1.8km  - 0.0",
+                    style = MaterialTheme.typography.displaySmall,
+                    fontSize = 12.sp,
+                    color = textColor
+                )
+            }
+            IconButton(onClick = { expanded = !expanded }) {
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                    contentDescription = "Expand",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        if(expanded){
+            Spacer(modifier=Modifier.height(8.dp))
+            Text(text ="Status: Available",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = textColor)
+
+            Text(text = "Connector: CCS2",
+                style = MaterialTheme.typography.labelSmall,
+                color = textColor)
+
+            Spacer(modifier=Modifier.height(8.dp))
+
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Button(
             onClick = {},
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00AEEF))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text("1.8 km away - Get Directions")
+            Text(text = "Get Directions",
+                style = MaterialTheme.typography.displayMedium)
+        }
         }
     }
 }
 
 @Composable
 fun AlternativeLocations() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min),
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        Box(modifier = Modifier.weight(1f)) {
-            SmallLocation("CHRISTINE'S BAKERY BANGI AVENUE", "2.6 km")
-        }
-        Box(modifier = Modifier.weight(1f)) {
-            SmallLocation("Tenera Hotel Bangi", "3.7 km")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.SpaceAround
+
+        ) {
+            Box(modifier = Modifier.weight(1f)) {
+                SmallLocation("CHRISTINE'S BAKERY BANGI AVENUE", "2.6 km")
+            }
+            Box(modifier = Modifier.weight(1f)) {
+                SmallLocation("Tenera Hotel Bangi", "3.7 km")
+            }
         }
     }
-}
+
 
 @Composable
 fun SmallLocation(name: String, distance: String) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+            .fillMaxHeight()
+            .padding(8.dp)
+        .shadow(4.dp, RoundedCornerShape(12.dp)),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        )
+    {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(4.dp)
-            .background(Color(0xFFEAEAEA), RoundedCornerShape(12.dp))
             .padding(12.dp)
     ) {
-        Text(name, fontSize = 12.sp, maxLines = 2, color = Color.Black)
-        Text(distance, fontSize = 10.sp, color = Color.Black)
+        Text(name, fontSize = 12.sp, maxLines = 2, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.displayMedium)
+        Text(distance, fontSize = 10.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.displaySmall)
     }
+ }
 }
 
 @Composable
@@ -371,16 +469,20 @@ fun FeaturesGrid() {
 
 @Composable
 fun FeatureItem(label: String, iconRes: Int, modifier: Modifier = Modifier, onClick: () -> Unit) {
+
+    val bgColor = MaterialTheme.colorScheme.tertiaryContainer
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick),
+
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .size(60.dp)
-                .background(Color(0xFFDDA0DD), RoundedCornerShape(30.dp)),
+                .shadow(4.dp, RoundedCornerShape(30.dp))
+                .background(bgColor, RoundedCornerShape(30.dp)),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -388,11 +490,12 @@ fun FeatureItem(label: String, iconRes: Int, modifier: Modifier = Modifier, onCl
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(12.dp)
+                    .padding(12.dp),
+
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = label, fontSize = 10.sp, maxLines = 2, textAlign = TextAlign.Center)
+        Text(text = label, fontSize = 10.sp, maxLines = 2, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.labelSmall)
     }
 }
 
@@ -401,7 +504,7 @@ fun BottomNav() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(4.dp))
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
@@ -417,27 +520,37 @@ fun BottomNav() {
 fun BottomItem(label: String, iconRes: Int, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+
     ) {
         Box(
-            modifier = Modifier
-                .size(30.dp),
+            modifier = Modifier.size(30.dp),
             contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = iconRes),
                 contentDescription = label,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
+
             )
         }
-        Text(label, fontSize = 10.sp, color = Color.Gray)
+        Text(label, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun GGPreview() {
-    A211684_Rabiatul_DrNazatulAini_Lab2Theme {
+fun ElecTraxPreview() {
+    A211684_Rabiatul_DrNazatulAini_Lab3Theme {
         ElecTraxHomepage()
     }
 }
+
+@Preview
+@Composable
+fun ElecTraxDarkThemePreview(){
+    A211684_Rabiatul_DrNazatulAini_Lab3Theme(darkTheme = true) {
+        ElecTraxHomepage()
+    }
+}
+

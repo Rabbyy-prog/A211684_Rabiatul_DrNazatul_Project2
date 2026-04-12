@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.a211684_rabiatul_drnazatulaini_lab2"
+    namespace = "com.example.a211684_rabiatul_drnazatulaini_lab3"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
