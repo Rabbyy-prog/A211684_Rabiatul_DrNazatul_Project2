@@ -4,17 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.a211684_rabiatul_drnazatulaini_lab3"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    namespace = "com.example.a211684_rabiatul_drnazatulaini_lab4"
+    compileSdk = 36 // 🔹 Updated to 36 as required by dependencies
 
     defaultConfig {
-        applicationId = "com.example.a211684_nazatulaini_lab2"
+        applicationId = "com.example.a211684_rabiatul_drnazatulaini_lab4"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 36 // 🔹 Updated to 36 for consistency
         versionCode = 1
         versionName = "1.0"
 
@@ -46,6 +42,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)

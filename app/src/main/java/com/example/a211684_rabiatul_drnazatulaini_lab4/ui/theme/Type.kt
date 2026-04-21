@@ -1,11 +1,11 @@
-package com.example.a211684_rabiatul_drnazatulaini_lab3.ui.theme
+package com.example.a211684_rabiatul_drnazatulaini_lab4.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.example.a211684_rabiatul_drnazatulaini_lab3.R
+import com.example.a211684_rabiatul_drnazatulaini_lab4.R
 import androidx.compose.ui.text.font.Font
 
 // Set of Material typography styles to start with
@@ -32,7 +32,7 @@ val Typography = Typography(
 
     labelSmall = TextStyle(
         fontFamily = Montserrat,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp
     ),
 

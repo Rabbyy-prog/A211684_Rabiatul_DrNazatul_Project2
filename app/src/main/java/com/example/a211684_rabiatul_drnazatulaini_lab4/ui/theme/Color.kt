@@ -1,6 +1,5 @@
-package com.example.a211684_rabiatul_drnazatulaini_lab3.ui.theme
+package com.example.a211684_rabiatul_drnazatulaini_lab4.ui.theme
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF006B5F)
