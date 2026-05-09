@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.a211684_rabiatul_drnazatulaini_lab4"
+    namespace = "com.example.a211684_rabiatul_drnazatulaini_project1"
     compileSdk = 36 // 🔹 Updated to 36 as required by dependencies
 
     defaultConfig {
-        applicationId = "com.example.a211684_rabiatul_drnazatulaini_lab4"
+        applicationId = "com.example.a211684_rabiatul_drnazatulaini_project1"
         minSdk = 24
         targetSdk = 36 // 🔹 Updated to 36 for consistency
         versionCode = 1

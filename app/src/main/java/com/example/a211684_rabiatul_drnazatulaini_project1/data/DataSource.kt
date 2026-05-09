@@ -1,5 +1,5 @@
-package com.example.a211684_rabiatul_drnazatulaini_lab4.data
-
+package com.example.a211684_rabiatul_drnazatulaini_project1.data
+//data source = contain real fixed data
 object DataSource {
     val StationList = listOf(
         StationUiState(
@@ -42,7 +42,6 @@ object DataSource {
             dc = "DC 1",
             ac = "AC 1"
         ),
-
     )
 
     val ChargerList = listOf(
@@ -66,35 +65,44 @@ object DataSource {
         ) ,
 
         ChargerUiState(
-        chargerName = "ELECTRAX CHARGER 06",
-        power = "22kW max",
-        connectors = listOf(
-            Connector(2, "Type 2", true),
-        )
-    ),
-
-        ChargerUiState(
-        chargerName = "ELECTRAX CHARGER 07",
-        power = "22kW max",
-        connectors = listOf(
-            Connector(2, "Type 2", true),
-        )
-    ),
-        ChargerUiState(
-        chargerName = "ELECTRAX CHARGER 08",
-        power = "22kW max",
-        connectors = listOf(
-        Connector(2, "Type 2", true),
+            chargerName = "ELECTRAX CHARGER 06",
+            power = "22kW max",
+            connectors = listOf(
+                Connector(2, "Type 2", true),
             )
         ),
-
         ChargerUiState(
-        chargerName = "ELECTRAX CHARGER 09",
-        power = "22kW max",
-        connectors = listOf(
-        Connector(2, "Type 2", true),
+            chargerName = "ELECTRAX CHARGER 07",
+            power = "22kW max",
+            connectors = listOf(
+                Connector(2, "Type 2", true),
+            )
+        ),
+        ChargerUiState(
+            chargerName = "ELECTRAX CHARGER 08",
+            power = "22kW max",
+            connectors = listOf(
+                Connector(2, "Type 2", true),
+            )
+        ),
+        ChargerUiState(
+            chargerName = "ELECTRAX CHARGER 09",
+            power = "22kW max",
+            connectors = listOf(
+                Connector(2, "Type 2", true),
             )
         )
     )
 
+    val PaymentMethodList = listOf(
+        PaymentMethod("TnG eWallet", PaymentType.EWALLET),
+        PaymentMethod("Debit/Credit Card", PaymentType.CARD),
+        PaymentMethod("Online Banking", PaymentType.FPX)
+    )
+
+    val FeeLists = listOf(
+        Fee("Charging Fee", "MYR 1.60/kWh"),
+        Fee("Idling Fee", "MYR 0.4/1 min"),
+        Fee("Idling Grace Period", "15 mins")
+    )
 }

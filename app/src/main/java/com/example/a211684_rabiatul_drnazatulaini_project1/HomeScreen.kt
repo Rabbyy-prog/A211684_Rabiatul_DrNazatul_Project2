@@ -1,5 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_lab4
-
+package com.example.a211684_rabiatul_drnazatulaini_project1
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -9,6 +8,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,13 +24,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material.icons.filled.BatteryChargingFull
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Directions
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -52,6 +64,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,15 +73,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.a211684_rabiatul_drnazatulaini_lab4.ui.theme.A211684_Rabiatul_DrNazatulAini_Lab4Theme
+import com.example.a211684_rabiatul_drnazatulaini_project1.ui.theme.A211684_Rabiatul_DrNazatulAini_Project1Theme
 
 @Composable
 fun ElecTraxHomepage(
     onViewAllClicked: () -> Unit,
-    onFastChargeClicked: () -> Unit // 🔹 Added callback for FastCharge
+    onFastChargeClicked: () -> Unit, // Added callback for FastCharge
+    session: Int,
+    energyUsed: String,
+    totalPaid: String,
+    co2Saved: String
 ) {  //need for overlay/layering (nearest location is displayed on top
     Box(
         modifier = Modifier
@@ -85,7 +103,7 @@ fun ElecTraxHomepage(
         Column( //main layout
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 150.dp)  // Starts just below wallpaper
+                .padding(top = 115.dp)  // Starts just below wallpaper
                 .padding(horizontal = 13.dp)  //lgi besar padding, lagi kecil margin
                 .padding(bottom = 16.dp)
         ) {
@@ -121,7 +139,21 @@ fun ElecTraxHomepage(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) { Text("Search") }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Text("Search station")
+                    }
+                }
 
                 if (searchResult.isNotEmpty()) {
                     Text(
@@ -179,7 +211,12 @@ fun ElecTraxHomepage(
                 FeaturesGrid(onFastChargeClicked = onFastChargeClicked) // 🔹 Passed callback here
                 Spacer(modifier = Modifier.height(20.dp)) //occupy remaining space & push BottomNav to the bottom
 
-                InsightBoard()
+                InsightBoard(
+                    session = session,
+                    energyUsed = energyUsed,
+                    totalPaid = totalPaid,
+                    co2Saved = co2Saved
+                )
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
@@ -213,14 +250,34 @@ fun ElecTraxHomepage(
 
 @Composable
 fun TopWallpaper() {
-    Image(
-        painter = painterResource(id = R.drawable.hari_raya_wallpaper_2), //take pic from res/drawable folder
-        contentDescription = "Hari Raya Banner", //for accessibility tools
+    Box(
         modifier = Modifier
-            .fillMaxWidth() //occupy full width only, not full height
-            .height(190.dp),
-        contentScale = ContentScale.Crop
-    )
+            .fillMaxWidth()
+            .height(180.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.homescreen_wallpaper), //take pic from res/drawable folder
+            contentDescription = "Hari Raya Banner", //for accessibility tools
+            modifier = Modifier
+                .fillMaxWidth() //occupy full width only, not full height
+                .height(160.dp),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(
+            modifier = Modifier.padding(start = 18.dp, top = 24.dp)
+        ){
+            Text(
+                text = "Welcome back, Nabila!",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+        }
+
+    }
 }
 
 @Composable
@@ -264,8 +321,8 @@ fun EditSearchField(
         },
         label = { Text(stringResource(id = label)) },
         keyboardOptions = keyboardOptions,
-        shape = RoundedCornerShape(28.dp),
-        colors = TextFieldDefaults.colors(
+        shape = RoundedCornerShape(20.dp),
+        colors = TextFieldDefaults.colors(//
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
@@ -273,6 +330,10 @@ fun EditSearchField(
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         modifier = modifier
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(20.dp)
+            )
     )
 }
 
@@ -337,106 +398,107 @@ fun NearestLocation() { //biggest card
     Card(
         modifier = Modifier
             .fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(containerColor =color) //colour by animateColorAsState: default - secondaryContainer
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(containerColor =color) //colour by animateColorAsState: default - secondaryContainer
     )
     {
-    Column(
-        modifier = Modifier
-            .animateContentSize(spring (dampingRatio = Spring.DampingRatioNoBouncy,//stop nicely, tak melantun
-                    stiffness = Spring.StiffnessMedium //fast = normal
-                )
-            )
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ev_chargers___bangi_gateway_shopping_mall),
-            contentDescription = "Bangi Gateway Mall EV charger",
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-            contentScale = ContentScale.Crop
-        )
+                .animateContentSize(spring (dampingRatio = Spring.DampingRatioNoBouncy,//stop nicely, tak melantun
+                    stiffness = Spring.StiffnessMedium //fast = normal
+                  )
+                )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ev_chargers___bangi_gateway_shopping_mall),
+                contentDescription = "Bangi Gateway Mall EV charger",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                contentScale = ContentScale.Crop
+            )
 
-        Column(modifier = Modifier.padding(12.dp)) {
-            Row( //row because i want the icon to be on the put beside the text label
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier
-                                    .weight(1f)) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Row( //row because i want the icon to be on the put beside the text label
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier
+                        .weight(1f)) {
 
-                    Text(
-                        "[Public] BANGI GATEWAY MALL (Shopping Mall)",
-                        style = MaterialTheme.typography.displayMedium,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = textColor
-                    )
-                    Text(
-                        "60 kW max  - 1.8km  - 0.0",
-                        style = MaterialTheme.typography.displaySmall,
-                        fontSize = 12.sp,
-                        color = textColor
-                    )
+                        Text(
+                            "[Public] BANGI GATEWAY MALL (Shopping Mall)",
+                            style = MaterialTheme.typography.displayMedium,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textColor
+                        )
+                        Text(
+                            "60 kW max  - 1.8km  - 0.0",
+                            style = MaterialTheme.typography.displaySmall,
+                            fontSize = 12.sp,
+                            color = textColor
+                        )
+                    }
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(
+                            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore, //get these icons from material icons library, import androidx.compose.material.icons.filled.ExpandLess/ExpandMore
+                            contentDescription = "Expand",
+                            tint = MaterialTheme.colorScheme.primary //Icon uses tint, Text uses colour
+                        )
+                    }
                 }
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore, //get these icons from material icons library, import androidx.compose.material.icons.filled.ExpandLess/ExpandMore
-                        contentDescription = "Expand",
-                        tint = MaterialTheme.colorScheme.primary //Icon uses tint, Text uses colour
-                    )
-                }
-            }
 
-            if(expanded){
-                Spacer(modifier=Modifier.height(8.dp))
-                Text(text ="Status: Available",
+                if(expanded){
+                    Spacer(modifier=Modifier.height(8.dp))
+                    Text(text ="Status: Available",
                         style = MaterialTheme.typography.labelSmall,
                         color = textColor)
 
-                Text(text = "Connector: CCS2",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = textColor)
+                    Text(text = "Connector: CCS2",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = textColor)
 
-                Spacer(modifier=Modifier.height(8.dp))
+                    Spacer(modifier=Modifier.height(8.dp))
 
-            }
+                }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Directions,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Get Directions",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold)
+                Button(
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Directions,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Get Directions",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold)
+                }
             }
         }
-    }
         Spacer(modifier = Modifier.height(16.dp))
-}
+    }
 }
 
 
 @Composable
 fun FeaturesGrid(onFastChargeClicked: () -> Unit) { // 🔹 Updated with callback
     Column {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            FeatureItem("FastCharge \nStations", R.drawable.ev_station_chargers, Modifier.weight(1f), onClick = onFastChargeClicked) // 🔹 Added navigation action
-            FeatureItem("AutoCharge", R.drawable.auto_charge, Modifier.weight(1f)) {}
-            FeatureItem("New Sites", R.drawable.new_site, Modifier.weight(1f)) {}
-            FeatureItem("My Favourite", R.drawable.ic_heart, Modifier.weight(1f)) {}
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+            FeatureItem(label = "FastCharge\nStations", iconRes =  R.drawable.ev_station_chargers, onClick = onFastChargeClicked) // Added navigation action
+            FeatureItem(label = "AutoCharge", iconRes = R.drawable.auto_charge) {}
+            FeatureItem(label ="New Sites", iconRes = R.drawable.new_site) {}
+            FeatureItem(label = "My Favourite", iconRes = R.drawable.ic_heart) {}
         }
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -444,96 +506,204 @@ fun FeaturesGrid(onFastChargeClicked: () -> Unit) { // 🔹 Updated with callbac
 }
 
 @Composable
-fun FeatureItem(label: String, iconRes: Int, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun FeatureItem(
+    label: String,
+    iconRes: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit) {
 
-    val bgColor = MaterialTheme.colorScheme.tertiaryContainer
-    Column(
+    Card(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick),
+            .padding(horizontal = 5.dp)
+            .width(78.dp)
+            .height(92.dp)
+            .clickable {
+                onClick()
+            },
 
-        horizontalAlignment = Alignment.CenterHorizontally
+        shape = RoundedCornerShape(22.dp),
+
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
     ) {
-        Box(
-            modifier = Modifier
-                .size(60.dp)
-                .shadow(4.dp, RoundedCornerShape(30.dp))
-                .background(bgColor, RoundedCornerShape(30.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
 
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    vertical = 12.dp
+                ),
+
+            horizontalAlignment =
+                Alignment.CenterHorizontally,
+
+            verticalArrangement =
+                Arrangement.SpaceEvenly
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(MaterialTheme.colorScheme.secondaryContainer, CircleShape),
+
+                contentAlignment =
+                    Alignment.Center
+            ) {
+
+                Image(
+                    painter = painterResource(iconRes),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+
+                Text(
+                    text = label,
+                    textAlign = TextAlign.Center,
+                    fontSize = 10.sp,
+                    lineHeight = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2,
+                    color = Color.Black
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = label, fontSize = 10.sp, maxLines = 2, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.labelSmall)
     }
+
 }
 
+
 @Composable
-fun InsightBoard(){
+fun InsightBoard(
+    session: Int,
+    energyUsed: String,
+    totalPaid: String,
+    co2Saved: String
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp),
-        shape = RoundedCornerShape(16.dp),
+
+        shape = RoundedCornerShape(28.dp),
+
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer
-        )
-    ){
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ){
-            Row(verticalAlignment = Alignment.CenterVertically){
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(50))
+            containerColor =
+                MaterialTheme.colorScheme
+                    .secondaryContainer
+        ),
+
+        border = BorderStroke(
+            width = 1.5.dp,
+            color =
+                MaterialTheme.colorScheme.primary.copy(
+                    alpha = 0.4f
                 )
-                    Spacer(modifier = Modifier.width(8.dp))
+        )
+    )
+    {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 18.dp, vertical = 16.dp)
+        ) {
 
-                    Text(
-                        text = "Your insights this month:",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-
-                    )
-            }
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Column {
-                    Text("0", fontWeight = FontWeight.Bold)
-                    Text("Session", fontSize = 12.sp)
+                Icon(
+                    imageVector = Icons.Default.Analytics,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                    Text("0.00 kWh", fontWeight = FontWeight.Bold)
-                    Text("Energy used", fontSize = 12.sp)
-                }
+                Text(
+                    text = "Your insights this month",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
 
-                Column(horizontalAlignment = Alignment.End) {
-                    Text("MYR 0.00", fontWeight = FontWeight.Bold)
-                    Text("Total Paid", fontSize = 12.sp)
+            Spacer(modifier = Modifier.height(18.dp))
 
-                    Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
 
-                    Text("0.00 kg", fontWeight = FontWeight.Bold)
-                    Text("CO2 saved", fontSize = 12.sp)
-                    }
-                }
+                horizontalArrangement =
+                    Arrangement.SpaceEvenly
+            ) {
+
+                InsightItem(
+                    icon = Icons.Default.Bolt,
+                    value = session.toString(),
+                    label = "Session"
+                )
+
+                InsightItem(
+                    icon = Icons.Default.BatteryChargingFull,
+                    value = energyUsed,
+                    label = "Energy"
+                )
+
+                InsightItem(
+                    icon = Icons.Default.AttachMoney,
+                    value = totalPaid,
+                    label = "Paid"
+                )
+
+                InsightItem(
+                    icon = Icons.Default.Eco,
+                    value = co2Saved,
+                    label = "CO₂"
+                )
             }
         }
     }
+}
 
+@Composable
+fun InsightItem(
+    icon: ImageVector,
+    value: String,
+    label: String
+) {
+
+    Column(
+        modifier = Modifier.width(80.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Icon(
+          imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(28.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = value,
+            fontWeight = FontWeight.Bold,
+            fontSize = 11.sp,
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+
+        Text(
+            text = label,
+            fontSize = 11.sp,
+            color = Color.Gray,
+            textAlign = TextAlign.Center
+        )
+    }
+}
 
 @Composable
 fun BottomNav() {
@@ -544,31 +714,32 @@ fun BottomNav() {
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        BottomItem("Explore", R.drawable.explore, Modifier.weight(1f))
-        BottomItem("Maps", R.drawable.map, Modifier.weight(1f))
-        BottomItem("Scan", R.drawable.qr_code_scanner, Modifier.weight(1f))
-        BottomItem("Rewards", R.drawable.rewards, Modifier.weight(1f))
-        BottomItem("Me", R.drawable.mee, Modifier.weight(1f))
+        BottomItem("Explore", Icons.Default.Search)
+        BottomItem("Maps",Icons.Default.LocationOn)
+        BottomItem("Scan", Icons.Default.QrCodeScanner)
+        BottomItem("Rewards", Icons.Default.Star)
+        BottomItem("Me",Icons.Default.Person)
     }
 }
 
 @Composable
-fun BottomItem(label: String, iconRes: Int, modifier: Modifier = Modifier) {
+fun BottomItem(label: String, icon: ImageVector, modifier: Modifier = Modifier, selected: Boolean = false) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
 
-    ) {
+        ) {
         Box(
             modifier = Modifier.size(30.dp),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(id = iconRes),
+            Icon(
+                imageVector = icon,
                 contentDescription = label,
                 modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
 
-            )
+                )
         }
         Text(label, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
     }
@@ -577,15 +748,27 @@ fun BottomItem(label: String, iconRes: Int, modifier: Modifier = Modifier) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ElecTraxPreview() {
-    A211684_Rabiatul_DrNazatulAini_Lab4Theme {
-        ElecTraxHomepage(onViewAllClicked = {}, onFastChargeClicked = {})
+    A211684_Rabiatul_DrNazatulAini_Project1Theme() {
+        ElecTraxHomepage(
+            onViewAllClicked = {},
+            onFastChargeClicked = {},
+            session = 0,
+            energyUsed = "0.00 kWh",
+            totalPaid = "MYR 0.00",
+            co2Saved = "0.00 kg")
     }
 }
 
 @Preview
 @Composable
 fun ElecTraxDarkThemePreview(){
-    A211684_Rabiatul_DrNazatulAini_Lab4Theme(darkTheme = true) {
-        ElecTraxHomepage(onViewAllClicked = {}, onFastChargeClicked = {})
+    A211684_Rabiatul_DrNazatulAini_Project1Theme(darkTheme = true) {
+        ElecTraxHomepage(
+            onViewAllClicked = {},
+            onFastChargeClicked = {},
+            session = 0,
+            energyUsed = "0.00 kWh",
+            totalPaid = "MYR 0.00",
+            co2Saved = "0.00 kg")
     }
 }

@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_lab4
+package com.example.a211684_rabiatul_drnazatulaini_project1
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -11,19 +11,21 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import com.example.a211684_rabiatul_drnazatulaini_lab4.data.Connector
-import com.example.a211684_rabiatul_drnazatulaini_lab4.ui.ChargingViewModel
-import com.example.a211684_rabiatul_drnazatulaini_lab4.data.DataSource
-import com.example.a211684_rabiatul_drnazatulaini_lab4.data.StationUiState
-import com.example.a211684_rabiatul_drnazatulaini_lab4.ui.SelectChargerScreen
-import com.example.a211684_rabiatul_drnazatulaini_lab4.ui.SelectStationScreen
-import com.example.a211684_rabiatul_drnazatulaini_lab4.ui.PaymentScreen
+import com.example.a211684_rabiatul_drnazatulaini_project1.data.Connector
+import com.example.a211684_rabiatul_drnazatulaini_project1.ui.ChargingViewModel
+import com.example.a211684_rabiatul_drnazatulaini_project1.data.DataSource
+import com.example.a211684_rabiatul_drnazatulaini_project1.data.StationUiState
+import com.example.a211684_rabiatul_drnazatulaini_project1.ui.ChargingScreen
+import com.example.a211684_rabiatul_drnazatulaini_project1.ui.SelectChargerScreen
+import com.example.a211684_rabiatul_drnazatulaini_project1.ui.SelectStationScreen
+import com.example.a211684_rabiatul_drnazatulaini_project1.ui.PaymentScreen
 
 enum class ElecTraxScreen(val title: String) { //route
-    Start("Home"), //HomeScreen.kt
-    SelectStation("Select Station"), //SelectStationScreen.kt
-    SelectCharger("Select Charger"), //SelectChargerScreen.kt
-    Payment("Confirm Payment") //PaymentScreen.kt
+    Start("Home"), //1.HomeScreen.kt
+    SelectStation("Select Station"), //2. SelectStationScreen.kt
+    SelectCharger("Select Charger"), //3. SelectChargerScreen.kt
+    Payment("Confirm Payment"),//4. PaymentScreen.kt
+    ChargingStatus("Charging Status") //5. ChargingScreen.kt
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +77,7 @@ fun ElecTraxApp(
             if (currentScreen != ElecTraxScreen.Start) {
                 ElecTraxAppBar(
                     currentScreen = currentScreen,
-                    canNavigateBack = navController.previousBackStackEntry != null,
+                    canNavigateBack = navController.previousBackStackEntry != null && currentScreen != ElecTraxScreen.Payment,
                     navigateUp = { navController.navigateUp() }
                 )
             }
@@ -89,18 +91,33 @@ fun ElecTraxApp(
             composable(ElecTraxScreen.Start.name) {
                 ElecTraxHomepage( //from ElecTraxHomepage Composable function
                     onViewAllClicked = { //viewAll button
-                        navController.navigate(ElecTraxScreen.SelectStation.name)
+                        navController.navigate(ElecTraxScreen.SelectStation.name
+                        )
                     },
                     onFastChargeClicked = {
                         navController.navigate(ElecTraxScreen.SelectStation.name)
-                    }
+                    },
+                    session = 0,
+
+                    energyUsed = if(uiState.currentUsage.isBlank())
+                                "0.00 kWh"
+                                 else
+                                     uiState.currentUsage,
+
+                    totalPaid =
+                        if(uiState.totalPrice.isBlank())
+                            "MYR0.00"
+                        else
+                            uiState.totalPrice,
+
+                    co2Saved = "0.00 kg"
                 )
             }
 
             composable(ElecTraxScreen.SelectStation.name) {
                 SelectStationScreen(
                     onStationClicked = { station: StationUiState ->
-                        viewModel.updateStation(station) //remember which station user selecteed and store selected station data temporarily
+                        viewModel.updateStation(station) //remember which station user selected and store selected station data temporarily
                         navController.navigate(ElecTraxScreen.SelectCharger.name)
                     }
                 )
@@ -111,7 +128,11 @@ fun ElecTraxApp(
                     onProceedClicked = { charger, connector ->
                         viewModel.updateCharger(charger)
                         viewModel.updateConnector(connector)
-                        navController.navigate(ElecTraxScreen.Payment.name)
+                        if(uiState.timeRemaining.isEmpty()) {
+                            viewModel.generateChargingSession()
+                        }
+                            navController.navigate(ElecTraxScreen.ChargingStatus.name)
+
                     }
                 )
             }
@@ -125,9 +146,37 @@ fun ElecTraxApp(
                     station = selectedStation,
                     charger = selectedCharger,
                     connector = selectedConnector,
+                    currentUsage = uiState.currentUsage,
+                    totalPrice = uiState.totalPrice,
                     onConfirmClicked = {
                         viewModel.resetSession()
                         navController.popBackStack(ElecTraxScreen.Start.name, inclusive = false)
+
+                    }
+                )
+            }
+
+            composable(ElecTraxScreen.ChargingStatus.name) {
+                val selectedConnector = uiState.selectedConnector
+                    ?:Connector(
+                        number = 1,
+                        type = "CCS 2",
+                        isAvailable = false
+                    )
+                ChargingScreen(
+                    connector = selectedConnector,
+                    batteryPercent = uiState.batteryPercent,
+                    timeRemaining = uiState.timeRemaining,
+                    currentUsage = uiState.currentUsage,
+                    totalPrice = uiState.totalPrice,
+                    onStopCharging = {
+                        navController.navigate(ElecTraxScreen.Payment.name){
+                            popUpTo(
+                                ElecTraxScreen.Start.name
+                            ) {
+                                inclusive = false
+                            }
+                        }
                     }
                 )
             }

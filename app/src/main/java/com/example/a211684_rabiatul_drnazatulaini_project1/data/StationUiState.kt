@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_lab4.data
+package com.example.a211684_rabiatul_drnazatulaini_project1.data
 
 data class StationUiState(
     val id: String = "ELECTRAX CHARGER",
