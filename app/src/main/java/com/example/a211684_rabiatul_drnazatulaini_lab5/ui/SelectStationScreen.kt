@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_project1.ui
+package com.example.a211684_rabiatul_drnazatulaini_lab5.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -23,20 +24,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.a211684_rabiatul_drnazatulaini_project1.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.a211684_rabiatul_drnazatulaini_lab5.R
 import com.example.a211684_rabiatul_drnazatulaini_project1.ui.theme.A211684_Rabiatul_DrNazatulAini_Project1Theme
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.DataSource
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.StationUiState
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.StationUiState
+import androidx.compose.runtime.LaunchedEffect
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.DataSource
 
+
+//using StationViewModel to get station data from Room database
 @Composable
 fun SelectStationScreen(
-    onStationClicked: (StationUiState) -> Unit = {}
+    onStationClicked: (StationUiState) -> Unit = {},
+
 ) {
     val stations = DataSource.StationList
     val recommendedStation = stations.firstOrNull()
-    val otherStations = stations.drop(1)
+    val otherStations = stations.drop(1) //remove first item
 
-    LazyColumn(
+    LazyColumn( //enable to scroll automatically
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
@@ -44,14 +51,14 @@ fun SelectStationScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Section: Recommended
-        item {
+        item { //because i use lazyColumn
             SectionHeader(title = "Recommended for you", icon = true)
         }
 
-        recommendedStation?.let {
+        recommendedStation?.let { //other way: items(otherStations){ station -> StationListItem(station = station, onClicked = onStationClicked) }
             item {
                 RecommendedStationCard(
-                    station = it,
+                    station = it, //refer to ?.let { it }
                     onClicked = onStationClicked
                 )
             }
@@ -194,7 +201,7 @@ fun RecommendedStationCard(
             }
 
             // "Best Choice" Badge
-            Surface(
+            Surface( //create an empty box shape
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(8.dp)
@@ -239,7 +246,7 @@ fun StationListItem(
 
                 Column {
                     Text(
-                        text = station.stationName,
+                        text = station.stationName, //refer to station:StationUiState from funStationListItem()
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
                         maxLines = 2
@@ -260,7 +267,7 @@ fun StationListItem(
                         modifier = Modifier.size(12.dp),
                         tint = Color(0xFFFFC107)
                     )
-                    
+
                     Spacer(modifier = Modifier.width(6.dp))
 
                     Text(

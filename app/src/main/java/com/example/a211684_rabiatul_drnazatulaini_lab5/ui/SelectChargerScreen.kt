@@ -23,10 +23,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.a211684_rabiatul_drnazatulaini_project1.R
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.ChargerUiState
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.Connector
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.DataSource
+import com.example.a211684_rabiatul_drnazatulaini_lab5.R
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.ChargerUiState
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.Connector
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.DataSource
+import com.example.a211684_rabiatul_drnazatulaini_lab5.ui.ChargingViewModel
 import com.example.a211684_rabiatul_drnazatulaini_project1.ui.theme.A211684_Rabiatul_DrNazatulAini_Project1Theme
 
 @Composable
@@ -61,8 +62,8 @@ fun SelectChargerScreen(
             }
         }
 
-        // Action Section
-        Surface(
+        //Bottom Action Section
+        Surface( //bottom panel
             modifier = Modifier.fillMaxWidth(),
             shadowElevation = 8.dp,
             color = MaterialTheme.colorScheme.surface
@@ -70,7 +71,7 @@ fun SelectChargerScreen(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                if (selectedCharger != null && selectedConnector != null) {
+                if (selectedCharger != null && selectedConnector != null) {//only show summary if user selected both
                     SelectionSummary(selectedCharger!!, selectedConnector!!)
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -78,15 +79,15 @@ fun SelectChargerScreen(
                 Button(
                     onClick = {
 
-                        val activeConnector =
+                        val activeConnector = //is users already charging
                             DataSource.ChargerList
-                                .flatMap { it.connectors }
-                                .find { it.isCurrentUser }
+                                .flatMap { it.connectors } //take all connectors & merge into one list
+                                .find { it.isCurrentUser } //find connector owned by current user
 
                         // If user already charging
                         if (activeConnector != null) {
 
-                            onProceedClicked(
+                            onProceedClicked( //resume charging
                                 selectedCharger ?: DataSource.ChargerList[0],
                                 activeConnector
                             )
@@ -94,12 +95,12 @@ fun SelectChargerScreen(
                         }
 
                         // Start new charging
-                        else if (
+                        else if ( //only continue if user selected both charger and connector
                             selectedCharger != null &&
                             selectedConnector != null
                         ) {
 
-                            selectedConnector!!.isAvailable = false
+                            selectedConnector!!.isAvailable = false //make connector unavailable after click
                             selectedConnector!!.isCurrentUser = true
 
                             onProceedClicked(
@@ -109,8 +110,9 @@ fun SelectChargerScreen(
                         }
                     },
 
+                    //can button 'start charging' be clicked
                     enabled =
-                        selectedConnector != null ||
+                        selectedConnector != null || //user selected connector
                                 DataSource.ChargerList.any { charger ->
                                     charger.connectors.any { it.isCurrentUser }
                                 },
@@ -131,7 +133,7 @@ fun SelectChargerScreen(
                         text =
                             if (
                                 DataSource.ChargerList.any { charger ->
-                                    charger.connectors.any { it.isCurrentUser }
+                                    charger.connectors.any { it.isCurrentUser } //is there any connector currently used by this user?
                                 }
                             )
                                 "Resume Charging"
@@ -303,7 +305,7 @@ fun ConnectorRow(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if (connector.isAvailable) {
+            if (connector.isAvailable) { //show radio button
                 RadioButton(
                     selected = isSelected,
                     onClick = onSelect,
@@ -320,7 +322,6 @@ fun ConnectorRow(
                     textAlign = TextAlign.End,
                     lineHeight = 10.sp
                 )
-
             }
         }
     }

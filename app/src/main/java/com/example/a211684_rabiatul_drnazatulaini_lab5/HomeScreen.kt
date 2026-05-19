@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_project1
+package com.example.a211684_rabiatul_drnazatulaini_lab5
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -83,6 +83,7 @@ import com.example.a211684_rabiatul_drnazatulaini_project1.ui.theme.A211684_Rabi
 fun ElecTraxHomepage(
     onViewAllClicked: () -> Unit,
     onFastChargeClicked: () -> Unit, // Added callback for FastCharge
+    onHistoryClicked: () -> Unit,
     session: Int,
     energyUsed: String,
     totalPaid: String,
@@ -93,12 +94,13 @@ fun ElecTraxHomepage(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background) // Changed from Color(0xFFF0FFFF)
     ) {
-        var destinationInput by remember { mutableStateOf("") } //user input
+        var destinationInput by remember { mutableStateOf("") } //user input //var = can change
         var isMessageVisible by remember { mutableStateOf(false) } //show & hide notification message
         var searchResult by remember { mutableStateOf("") } //use "" to update showing stations near "(places)"
         var showSuggestions by remember { mutableStateOf(false) } //whether the window is open/closed
+        val username = "Nabila"
 
-        TopWallpaper()
+        TopWallpaper(username = username)
 
         Column( //main layout
             modifier = Modifier
@@ -193,7 +195,9 @@ fun ElecTraxHomepage(
                         color = MaterialTheme.colorScheme.onBackground
                     )
 
-                    TextButton(onClick = onViewAllClicked) {
+                    TextButton(
+                        onClick = onViewAllClicked
+                    ) {
                         Text(
                             text = "View All",
                             fontSize = 12.sp,
@@ -208,7 +212,7 @@ fun ElecTraxHomepage(
                 NearestLocation() //card
                 Spacer(modifier = Modifier.height(20.dp)) //spacing between two component (below it)
 
-                FeaturesGrid(onFastChargeClicked = onFastChargeClicked) // 🔹 Passed callback here
+                FeaturesGrid(onFastChargeClicked = onFastChargeClicked, onHistoryClicked = onHistoryClicked) // 🔹 Passed callback here
                 Spacer(modifier = Modifier.height(20.dp)) //occupy remaining space & push BottomNav to the bottom
 
                 InsightBoard(
@@ -249,7 +253,7 @@ fun ElecTraxHomepage(
 }
 
 @Composable
-fun TopWallpaper() {
+fun TopWallpaper(username:String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -268,7 +272,7 @@ fun TopWallpaper() {
             modifier = Modifier.padding(start = 18.dp, top = 24.dp)
         ){
             Text(
-                text = "Welcome back, Nabila!",
+                text = stringResource(R.string.welcome_user, username),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -491,13 +495,13 @@ fun NearestLocation() { //biggest card
 
 
 @Composable
-fun FeaturesGrid(onFastChargeClicked: () -> Unit) { // 🔹 Updated with callback
+fun FeaturesGrid(onFastChargeClicked: () -> Unit, onHistoryClicked:() ->Unit) {
     Column {
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly) {
             FeatureItem(label = "FastCharge\nStations", iconRes =  R.drawable.ev_station_chargers, onClick = onFastChargeClicked) // Added navigation action
             FeatureItem(label = "AutoCharge", iconRes = R.drawable.auto_charge) {}
-            FeatureItem(label ="New Sites", iconRes = R.drawable.new_site) {}
+            FeatureItem(label ="My History", iconRes = R.drawable.history, onClick = onHistoryClicked)
             FeatureItem(label = "My Favourite", iconRes = R.drawable.ic_heart) {}
         }
         Spacer(modifier = Modifier.height(12.dp))
@@ -752,6 +756,7 @@ fun ElecTraxPreview() {
         ElecTraxHomepage(
             onViewAllClicked = {},
             onFastChargeClicked = {},
+            onHistoryClicked = {},
             session = 0,
             energyUsed = "0.00 kWh",
             totalPaid = "MYR 0.00",
@@ -766,6 +771,7 @@ fun ElecTraxDarkThemePreview(){
         ElecTraxHomepage(
             onViewAllClicked = {},
             onFastChargeClicked = {},
+            onHistoryClicked = {},
             session = 0,
             energyUsed = "0.00 kWh",
             totalPaid = "MYR 0.00",

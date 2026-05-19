@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_project1
+package com.example.a211684_rabiatul_drnazatulaini_lab5
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

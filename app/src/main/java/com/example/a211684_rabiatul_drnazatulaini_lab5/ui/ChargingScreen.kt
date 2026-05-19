@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_project1.ui
+package com.example.a211684_rabiatul_drnazatulaini_lab5.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,8 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.a211684_rabiatul_drnazatulaini_project1.R
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.Connector
+import com.example.a211684_rabiatul_drnazatulaini_lab5.R
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.Connector
 
 val HubotSans = FontFamily(
     Font(R.font.hubot_sans_light, FontWeight.Light),

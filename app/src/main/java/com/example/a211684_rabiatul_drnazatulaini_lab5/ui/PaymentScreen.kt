@@ -27,11 +27,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.a211684_rabiatul_drnazatulaini_project1.R
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.Connector
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.DataSource
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.PaymentType
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.StationUiState
+import com.example.a211684_rabiatul_drnazatulaini_lab5.R
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.Connector
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.DataSource
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.PaymentType
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.StationUiState
 import com.example.a211684_rabiatul_drnazatulaini_project1.ui.theme.A211684_Rabiatul_DrNazatulAini_Project1Theme
 
 @Composable
@@ -85,7 +85,7 @@ fun PaymentScreen(
                     Spacer(Modifier.width(12.dp))
                     Column {
                         Text(station.id, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(station.stationName, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(station.stationName, fontWeight = FontWeight.Bold, fontSize = 16.sp) //gets value from uiState.selectedStation, which come from viewModel.updateStation(station)
                         Text(station.address, fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
                         Text("Operator: ${station.operator}", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
                     }

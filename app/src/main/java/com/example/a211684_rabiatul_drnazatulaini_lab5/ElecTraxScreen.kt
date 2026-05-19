@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_project1
+package com.example.a211684_rabiatul_drnazatulaini_lab5
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -11,21 +11,25 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.Connector
-import com.example.a211684_rabiatul_drnazatulaini_project1.ui.ChargingViewModel
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.DataSource
-import com.example.a211684_rabiatul_drnazatulaini_project1.data.StationUiState
-import com.example.a211684_rabiatul_drnazatulaini_project1.ui.ChargingScreen
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.Connector
+import com.example.a211684_rabiatul_drnazatulaini_lab5.ui.ChargingViewModel
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.DataSource
+import com.example.a211684_rabiatul_drnazatulaini_lab5.data.StationUiState
+import com.example.a211684_rabiatul_drnazatulaini_lab5.ui.ChargingScreen
+import com.example.a211684_rabiatul_drnazatulaini_lab5.ui.ChargingViewModelProvider
 import com.example.a211684_rabiatul_drnazatulaini_project1.ui.SelectChargerScreen
-import com.example.a211684_rabiatul_drnazatulaini_project1.ui.SelectStationScreen
+import com.example.a211684_rabiatul_drnazatulaini_lab5.ui.SelectStationScreen
 import com.example.a211684_rabiatul_drnazatulaini_project1.ui.PaymentScreen
+import com.example.a211684_rabiatul_drnazatulaini_lab5.ui.ChargingHistoryScreen
 
 enum class ElecTraxScreen(val title: String) { //route
     Start("Home"), //1.HomeScreen.kt
     SelectStation("Select Station"), //2. SelectStationScreen.kt
     SelectCharger("Select Charger"), //3. SelectChargerScreen.kt
     Payment("Confirm Payment"),//4. PaymentScreen.kt
-    ChargingStatus("Charging Status") //5. ChargingScreen.kt
+    ChargingStatus("Charging Status"), //5. ChargingScreen.kt
+
+    ChargingHistory("Charging History") //6. ChargingHistoryScreen.kt
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +61,7 @@ fun ElecTraxAppBar(
 
 @Composable
 fun ElecTraxApp(
-    viewModel: ChargingViewModel = viewModel(),
+    viewModel: ChargingViewModel = viewModel(factory = ChargingViewModelProvider.Factory),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -69,7 +73,7 @@ fun ElecTraxApp(
         ElecTraxScreen.Start
     }
 
-    val uiState by viewModel.uiState.collectAsState() //read data from ViewModel
+    val uiState by viewModel.uiState.collectAsState() //read data from ViewModel, this is important!!!
 
     Scaffold(
         topBar = {
@@ -94,21 +98,29 @@ fun ElecTraxApp(
                         navController.navigate(ElecTraxScreen.SelectStation.name
                         )
                     },
+
+                    onHistoryClicked = {
+                        navController.navigate(
+                            ElecTraxScreen.ChargingHistory.name
+                        )
+                    },
+
+
                     onFastChargeClicked = {
                         navController.navigate(ElecTraxScreen.SelectStation.name)
                     },
                     session = 0,
 
-                    energyUsed = if(uiState.currentUsage.isBlank())
-                                "0.00 kWh"
-                                 else
-                                     uiState.currentUsage,
+                    energyUsed =
+                        uiState.currentUsage.ifBlank {
+                            "0.00 kWh"
+                        },
+
 
                     totalPaid =
-                        if(uiState.totalPrice.isBlank())
+                        uiState.totalPrice.ifBlank {
                             "MYR0.00"
-                        else
-                            uiState.totalPrice,
+                        },
 
                     co2Saved = "0.00 kg"
                 )
@@ -137,7 +149,7 @@ fun ElecTraxApp(
                 )
             }
 
-            composable(ElecTraxScreen.Payment.name) {
+            composable(ElecTraxScreen.Payment.name) { //no viewModel bcs it is reading data, not updating data
                 val selectedStation = uiState.selectedStation ?: DataSource.StationList[0]
                 val selectedCharger = uiState.selectedCharger?.chargerName ?: "Charger A"
                 val selectedConnector = uiState.selectedConnector
@@ -170,6 +182,7 @@ fun ElecTraxApp(
                     currentUsage = uiState.currentUsage,
                     totalPrice = uiState.totalPrice,
                     onStopCharging = {
+                        viewModel.saveChargingHistory()
                         navController.navigate(ElecTraxScreen.Payment.name){
                             popUpTo(
                                 ElecTraxScreen.Start.name
@@ -179,6 +192,12 @@ fun ElecTraxApp(
                         }
                     }
                 )
+            }
+
+            composable(
+                ElecTraxScreen.ChargingHistory.name
+            ) {
+                ChargingHistoryScreen()
             }
         }
     }

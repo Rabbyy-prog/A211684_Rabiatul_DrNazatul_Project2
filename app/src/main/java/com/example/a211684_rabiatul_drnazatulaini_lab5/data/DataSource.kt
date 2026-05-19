@@ -1,4 +1,4 @@
-package com.example.a211684_rabiatul_drnazatulaini_project1.data
+package com.example.a211684_rabiatul_drnazatulaini_lab5.data
 //data source = contain real fixed data
 object DataSource {
     val StationList = listOf(
