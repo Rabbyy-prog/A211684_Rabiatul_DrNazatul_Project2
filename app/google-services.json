@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "818321758783",
+    "project_id": "electrax-b1bef",
+    "storage_bucket": "electrax-b1bef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818321758783:android:6bf469b783e2a829e6368a",
+        "android_client_info": {
+          "package_name": "com.example.a211684_rabiatul_drnazatulaini_project2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC68GGk41Lgc4-rWMv4e_fZI1PFdS6u0RU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

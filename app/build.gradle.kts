@@ -2,14 +2,16 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+
+    alias(libs.plugins.google.services)
 }
 
 android {
-    namespace = "com.example.a211684_rabiatul_drnazatulaini_lab5"
+    namespace = "com.example.a211684_rabiatul_drnazatulaini_project2"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.a211684_rabiatul_drnazatulaini_lab5"
+        applicationId = "com.example.a211684_rabiatul_drnazatulaini_project2"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -37,6 +39,19 @@ android {
 }
 
 dependencies {
+
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
+
+    //Retrofit & Gson Converter
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //ViewModel Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+
+    //GPS
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+
     // Room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
