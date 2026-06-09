@@ -1,5 +1,5 @@
 
-My project 2 is the continuation from my project 1 and lab 5.
+My project 2 is the continuation from my project 1 and lab 5. This project follows SDG 7 (Affordable & Clean Energy).
 
 In this project 2, here are a few things that I add and improvise:
 
